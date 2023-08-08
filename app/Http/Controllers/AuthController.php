@@ -53,9 +53,7 @@ class AuthController extends Controller
             'lastname' => 'required|string',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string',
-            'username' => 'required|string|unique:users',
             'date_of_birth' => 'required|date|before:-18 years',
-            'name' => 'required|string',
         ]);
 
         $user = User::create([
@@ -63,9 +61,7 @@ class AuthController extends Controller
             'lastname' => $request->lastname,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'username' => $request->username,
             'date_of_birth' => $request->date_of_birth,
-            'planetary_system_name' => $request->name,
         ]);
         Auth::login($user);
         $credentials = $request->only('email', 'password');
@@ -106,7 +102,6 @@ class AuthController extends Controller
             //dans la table Users.
             'email' => 'required|string|email|unique:users,email,' . Auth::user()->id,
             'password' => 'required|string',
-            'username' => 'required|string|unique:users,username,' . Auth::user()->id
         ]);
 
         $update = User::find(Auth::user()->id);
@@ -114,7 +109,6 @@ class AuthController extends Controller
         $update->lastname = $request->input('lastname');
         $update->email = $request->input('email');
         $update->password = Hash::make($request->input('password'));
-        $update->username = $request->input('username');
         $update->save();
         Auth::login($update);
 
