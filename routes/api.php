@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GareController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*Routes Protegés par le middleware*/
+/*Routes Protegés par le middleware  Auth.php JWT*/
 
 Route::middleware('jwt.verify')->group(function () {
 
@@ -23,7 +24,12 @@ Route::middleware('jwt.verify')->group(function () {
     
 });
 
-/* Route du controller AuthController avec JWT  */
+/*Routes Publiques*/
+
+Route::get('/gares', [GareController::class, 'appelGare']);
+Route::get('/gares/{depart}/{arrivee}/{passager}', [GareController::class, 'calculPrix']);
+
+/* Route du controller AuthController avec création de Token   */
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('register', 'register');
