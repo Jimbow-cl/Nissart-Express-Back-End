@@ -45,7 +45,7 @@ class GareController extends Controller
         return response()->json($gares);
     }
 
-    public function calculPrix(Request $request, $start, $end, $passenger)
+    public function calculPrix(Request $request, $start, $end, $passenger,$date)
     {
         $voucher = 0;
         $user_id = Auth::id();
@@ -99,7 +99,11 @@ class GareController extends Controller
         $totalPriceBfVoucher = $differenceKm * $priceKm;
 
         // Calcul du montant de réduction
-        $priceVoucher = $totalPriceBfVoucher * $voucher->value / 100;
+        if ($voucher != 0) {
+            $priceVoucher = $totalPriceBfVoucher * $voucher->value / 100;
+        } else {
+            $priceVoucher = 0;
+        }
 
         // Calcul du prix total après réduction et ajout des passagers
         $totalPrice = ($totalPriceBfVoucher * $passenger) - $priceVoucher;
@@ -115,14 +119,13 @@ class GareController extends Controller
         $prix1st = round($prix1st, 2);
 
         return response()->json([
-            'depart' => $startStation,
-            'arrivee' => $endStation,
+            'depart' => $startStation['gare'],
+            'arrivee' => $endStation['gare'],
+            'date' => $date,
             'passager' => $passenger,
-            'dep_ref' => $startRef,
-            'arr_ref' => $endRef,
             'reduction en €' => $priceVoucher,
-            'prix2nd' => $totalPrice,
             'prix1st' => $prix1st,
+            'prix2nd' => $totalPrice,
         ]);
     }
 }

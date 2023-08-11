@@ -27,7 +27,7 @@ Route::middleware('jwt.verify')->group(function () {
 /*Routes Publiques*/
 
 Route::get('/gares', [GareController::class, 'appelGare']);
-Route::get('/gares/{depart}/{arrivee}/{passager}', [GareController::class, 'calculPrix']);
+Route::get('/gares/{depart}/{arrivee}/{passager}/{date}', [GareController::class, 'calculPrix']);
 
 /* Route du controller AuthController avec création de Token   */
 Route::controller(AuthController::class)->group(function () {
