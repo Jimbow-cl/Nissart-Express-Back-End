@@ -48,7 +48,7 @@ class GareController extends Controller
     public function calculPrix(Request $request, $start, $end, $passenger)
     {
         $voucher = 0;
-        $user_id = 1;
+        $user_id = Auth::id();
         if ($user_id != null) {
             $voucher = Voucher::select('value')->where('user_id', $user_id)->first();
         };
@@ -113,7 +113,7 @@ class GareController extends Controller
         //Calcul de la première classe 
         $prix1st = $totalPrice * 1.4;
         $prix1st = round($prix1st, 2);
-        
+
         return response()->json([
             'depart' => $startStation,
             'arrivee' => $endStation,
