@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Voucher;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GareController extends Controller
 {
@@ -31,7 +33,7 @@ class GareController extends Controller
                 'gare' => $gare,
                 'code_uic' => $codeUic,
                 'code_ligne' => $codeLigne,
-                'point_km'=> $pk
+                'point_km' => $pk
             ];
         }
         // Usort,  Outil de comparaison. Je retourne le tableau par ordre alphabétique
@@ -43,14 +45,84 @@ class GareController extends Controller
         return response()->json($gares);
     }
 
-    public function calculPrix(Request $request, $depart,$arrivee,$passager){
+    public function calculPrix(Request $request, $start, $end, $passenger)
+    {
+        $voucher = 0;
+        $user_id = 1;
+        if ($user_id != null) {
+            $voucher = Voucher::select('value')->where('user_id', $user_id)->first();
+        };
 
+        $response = $this->appelGare(); // Appel de la fonction appelGare
+        $stations = json_decode($response->getContent(), true);
+
+        $startStation = null;
+        $endStation = null;
+
+        // Parcourir le tableau des gares pour trouver les gares correspondantes
+        foreach ($stations as $station) {
+            if ($station['code_uic'] === $start) {
+                $startStation = $station;
+                // 4 Lignes existes,calcule du Pk pour enlever le nombre de km de départ pour le prix
+                if ($startStation['code_ligne'] === "930000") {
+                    $startRef = $startStation['point_km'] - 184;
+                }
+                if ($startStation['code_ligne'] === "944000") {
+                    $startRef = $startStation['point_km'] - 2;
+                }
+                if ($startStation['code_ligne'] === "945000") {
+                    $startRef = $startStation['point_km'] - 9;
+                }
+                if ($startStation['code_ligne'] === "946000") {
+                    $startRef = $startStation['point_km'] - 37;
+                }
+            }
+            if ($station['code_uic'] === $end) {
+                $endStation = $station;
+                // 4 Lignes existes,calcule du Pk pour enlever le nombre de km de départ pour le prix
+                if ($endStation['code_ligne'] === "930000") {
+                    $endRef = $endStation['point_km'] - 184;
+                }
+                if ($endStation['code_ligne'] === "944000") {
+                    $endRef = $endStation['point_km'] - 2;
+                }
+                if ($endStation['code_ligne'] === "945000") {
+                    $endRef = $endStation['point_km'] - 9;
+                }
+                if ($endStation['code_ligne'] === "946000") {
+                    $endRef = $endStation['point_km'] - 37;
+                }
+            }
+        }
+        $differenceKm = abs($endRef - $startRef);
+        $priceKm = 0.2;
+        $totalPriceBfVoucher = $differenceKm * $priceKm;
+
+        // Calcul du montant de réduction
+        $priceVoucher = $totalPriceBfVoucher * $voucher->value / 100;
+
+        // Calcul du prix total après réduction et ajout des passagers
+        $totalPrice = ($totalPriceBfVoucher * $passenger) - $priceVoucher;
+
+        // je préviens juste au cas où le prix est inférieur, d'un minimum de 0€
+        if ($totalPrice < 0) {
+            $totalPrice = 0;
+        }
+        $totalPrice = round($totalPrice, 2);
+
+        //Calcul de la première classe 
+        $prix1st = $totalPrice * 1.4;
+        $prix1st = round($prix1st, 2);
+        
         return response()->json([
-            'depart' => $depart,
-            'arrivee' => $arrivee,
-            'passager' => $passager
+            'depart' => $startStation,
+            'arrivee' => $endStation,
+            'passager' => $passenger,
+            'dep_ref' => $startRef,
+            'arr_ref' => $endRef,
+            'reduction en €' => $priceVoucher,
+            'prix2nd' => $totalPrice,
+            'prix1st' => $prix1st,
         ]);
-
     }
-
 }
