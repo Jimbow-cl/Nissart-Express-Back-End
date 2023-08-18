@@ -51,6 +51,7 @@ class GareController extends Controller
         $user_id = Auth::id();
         if ($user_id != null) {
             $voucher = Voucher::where('user_id', $user_id)->first();
+            $voucher = $voucher->value;
         }
        
 
@@ -100,8 +101,8 @@ class GareController extends Controller
         $totalPriceBfVoucher = $differenceKm * $priceKm;
 
         // Calcul du montant de réduction
-        if ($voucher->value != 0 ) {
-            $priceVoucher = $totalPriceBfVoucher * $voucher->value / 100;
+        if ($voucher != 0  ) {
+            $priceVoucher = $totalPriceBfVoucher * $voucher / 100;
         } else {
             $priceVoucher = 0;
         }
