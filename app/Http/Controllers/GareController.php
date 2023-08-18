@@ -45,15 +45,20 @@ class GareController extends Controller
         return response()->json($gares);
     }
 
-    public function calculPrix(Request $request, $start, $end, $passenger,$date)
+    public function calculPrix(Request $request, $start, $end, $passenger, $date)
     {
         $voucher = 0;
         $user_id = Auth::id();
         if ($user_id != null) {
             $voucher = Voucher::where('user_id', $user_id)->first();
-            $voucher = $voucher->value;
+            // Verification si il existe une Réduction à l'utilisateur:
+            if ($voucher == null) {
+                $voucher = 0;
+            } else {
+                $voucher = $voucher->value;
+            }
         }
-       
+
 
         $response = $this->appelGare(); // Appel de la fonction appelGare
         $stations = json_decode($response->getContent(), true);
@@ -101,7 +106,7 @@ class GareController extends Controller
         $totalPriceBfVoucher = $differenceKm * $priceKm;
 
         // Calcul du montant de réduction
-        if ($voucher != 0  ) {
+        if ($voucher != 0) {
             $priceVoucher = $totalPriceBfVoucher * $voucher / 100;
         } else {
             $priceVoucher = 0;
