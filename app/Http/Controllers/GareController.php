@@ -51,7 +51,8 @@ class GareController extends Controller
         $user_id = Auth::id();
         if ($user_id != null) {
             $voucher = Voucher::select('value')->where('user_id', $user_id)->first();
-        };
+        }
+       
 
         $response = $this->appelGare(); // Appel de la fonction appelGare
         $stations = json_decode($response->getContent(), true);
@@ -99,7 +100,7 @@ class GareController extends Controller
         $totalPriceBfVoucher = $differenceKm * $priceKm;
 
         // Calcul du montant de réduction
-        if ($voucher != 0) {
+        if ($voucher != 0 ) {
             $priceVoucher = $totalPriceBfVoucher * $voucher->value / 100;
         } else {
             $priceVoucher = 0;
