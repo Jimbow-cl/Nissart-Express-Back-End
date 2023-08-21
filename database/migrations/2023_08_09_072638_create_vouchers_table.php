@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('vouchers', function (Blueprint $table) {
-            $table->id()->foreign('receipt_train.voucher_id');
+            $table->id()->foreign('receipt_train.voucher_id')->foreign('users.voucher');
             $table->integer('value');
             $table->bigInteger('user_id');
             $table->timestamp('created_at')->useCurrent();

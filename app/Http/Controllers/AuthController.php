@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,6 +61,8 @@ class AuthController extends Controller
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'email' => $request->email,
+            'role' => 'user',
+            'voucher' => null,
             'password' => Hash::make($request->password),
             'date_of_birth' => $request->date_of_birth,
         ]);
