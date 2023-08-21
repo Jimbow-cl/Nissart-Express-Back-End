@@ -130,7 +130,7 @@ class GareController extends Controller
             'arrivee' => $endStation['gare'],
             'date' => $date,
             'passager' => $passenger,
-            'reduction en €' => $priceVoucher,
+            'discount' => $priceVoucher,
             'prix1st' => $prix1st,
             'prix2nd' => $totalPrice,
         ]);

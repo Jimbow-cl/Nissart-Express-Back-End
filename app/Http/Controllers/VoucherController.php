@@ -22,9 +22,9 @@ class VoucherController extends Controller
             $voucher->user_id = $user_id;
             $voucher->value = $value;
             $voucher->save();
-            $verify = Voucher::select('id')->where('user_id', $user_id)->first();
+            $verify = Voucher::select('value')->where('user_id', $user_id)->first();
             $user = User::where('id', $user_id)->first();
-            $user->voucher = $verify->id;
+            $user->voucher = $verify->value;
             $user->save();
             return response()->json(['success' => true], 200);
 
@@ -50,6 +50,10 @@ class VoucherController extends Controller
             if ($expirationDate >= $today) {
                 return response()->json([$voucher], 200);
             } else {
+                $user = User::where('id', $user_id)->first();
+                $user->voucher = null;
+                $user->save();
+    
                 $voucher->delete();
                 return response()->json(['success' => false]);
             }
