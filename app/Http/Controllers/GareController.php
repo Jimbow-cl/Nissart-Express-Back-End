@@ -124,7 +124,7 @@ class GareController extends Controller
         //Calcul de la première classe 
         $prix1st = $totalPrice * 1.4;
         $prix1st = round($prix1st, 2);
-
+        $priceVoucher = round($priceVoucher, 2);
         return response()->json([
             'depart' => $startStation['gare'],
             'arrivee' => $endStation['gare'],
