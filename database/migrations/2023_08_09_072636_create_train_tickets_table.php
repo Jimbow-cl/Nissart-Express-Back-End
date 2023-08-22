@@ -14,8 +14,11 @@ return new class extends Migration
     {
         Schema::create('train_tickets', function (Blueprint $table) {
             $table->id()->foreign('receipt_train.train_ticket_id');
-            $table->string('from');
-            $table->string('to');
+            $table->string('start');
+            $table->string('end');
+            $table->string('passenger');
+            $table->string('class');
+            $table->date('schedule');
             $table->bigInteger('user_id');
             $table->string('status')->default('disponible');
             $table->timestamp('created_at')->useCurrent();

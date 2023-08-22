@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GareController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,8 @@ Route::middleware('jwt.verify')->group(function () {
 Route::get('/voucher', [VoucherController::class, 'read']);
 Route::post('/voucher/{value}',[VoucherController::class,'create']);
     
+// Tickets
+Route::get('/available', [TicketController::class, 'available']);
 });
 
 /*Routes Publiques*/
