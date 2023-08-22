@@ -6,6 +6,7 @@ use App\Models\Ticket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class TicketController extends Controller
 {
@@ -13,16 +14,13 @@ class TicketController extends Controller
     {
         $user_id = Auth::id();
         $tickets = Ticket::where('user_id', $user_id)->get();
-        // Carbon permet de gèrer les date plus précisément
-        $yesterday = Carbon::yesterday(); 
-
+        //mise en forme de la date sans les hh:mm:ss
+        $today = now()->format('Y-m-d');
         foreach ($tickets as $ticket) {
-            $ticketDate = Carbon::parse($ticket->schedule);
-    
-            if ($ticketDate->lessThan($yesterday)) {
+            if ($ticket->schedule < $today) {
                 $ticket->status = "EXPIRED";
                 $ticket->save();
-            }
+            };
         }
         return (response()->json([
             'success' => true,
