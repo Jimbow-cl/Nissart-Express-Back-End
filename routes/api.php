@@ -29,7 +29,7 @@ Route::post('/voucher/{value}',[VoucherController::class,'create']);
 /*Routes Publiques*/
 
 Route::get('/gares', [GareController::class, 'appelGare']);
-Route::get('/gares/{depart}/{arrivee}/{passager}/{date}', [GareController::class, 'calculPrix']);
+Route::get('/pricing', [GareController::class, 'calculPrix']);
 
 /* Route du controller AuthController avec création de Token   */
 Route::controller(AuthController::class)->group(function () {

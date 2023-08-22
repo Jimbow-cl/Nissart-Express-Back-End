@@ -45,8 +45,14 @@ class GareController extends Controller
         return response()->json($gares);
     }
 
-    public function calculPrix(Request $request, $start, $end, $passenger, $date)
+    public function calculPrix(Request $request)
     {
+        // utilisation des Query Params à la place des Pass Params
+
+        $start = $request->query('start');
+        $end = $request->query('end'); 
+        $passenger= $request->query('passenger');
+        $date = $request->query('date');
         $voucher = 0;
         $user_id = Auth::id();
         if ($user_id != null) {
