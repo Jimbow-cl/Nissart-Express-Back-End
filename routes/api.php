@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GareController;
+use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Http\Request;
@@ -28,6 +29,10 @@ Route::post('/voucher/{value}',[VoucherController::class,'create']);
 // Tickets
 Route::get('/available', [TicketController::class, 'available']);
 Route::post('/validate/{id}', [TicketController::class, 'validation']);
+
+//Paiements Stripes
+
+Route::post('order/pay',[StripePaymentController::class,'payByStripe']);
 });
 
 /*Routes Publiques*/
