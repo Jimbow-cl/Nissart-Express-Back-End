@@ -27,6 +27,7 @@ Route::post('/voucher/{value}',[VoucherController::class,'create']);
     
 // Tickets
 Route::get('/available', [TicketController::class, 'available']);
+Route::post('/validate/{id}', [TicketController::class, 'validation']);
 });
 
 /*Routes Publiques*/
