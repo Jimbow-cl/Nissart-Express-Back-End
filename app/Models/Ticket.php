@@ -10,11 +10,13 @@ class Ticket extends Model
     use HasFactory;
     protected $table = 'train_tickets';
     protected $fillable = [
+        'order_id',
         'start',
         'end',
         'passenger',
         'class',
         'schedule',
-        'status'
+        'status',
+        'user_id'
     ];
 }

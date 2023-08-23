@@ -13,7 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('train_tickets', function (Blueprint $table) {
-            $table->id()->foreign('receipt_train.train_ticket_id');
+            $table->id();
+            $table->bigInteger('order_id');
             $table->string('start');
             $table->string('end');
             $table->string('passenger');

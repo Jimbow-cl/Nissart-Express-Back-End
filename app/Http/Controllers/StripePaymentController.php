@@ -19,7 +19,7 @@ class StripePaymentController extends Controller
 
         try {
             // Récuperation des données du Front
-            $metadata = $request;
+            $metadata = $request->all();;
 
             // Créer un paiement avec les métadonnées
             $paymentIntent = \Stripe\PaymentIntent::create([
@@ -37,16 +37,14 @@ class StripePaymentController extends Controller
                     'schedule' => $metadata['schedule'],
                     'class' => $metadata['class'],
                     'user_id' => $metadata['user_id'],
-                    'price' => $metadata['price'],
-                    'voucher_id' => $metadata['voucher_id']
-                ]
+                    'price' => $metadata['price'],                ]
             ]);
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'paiement_id' => $paymentIntent->id,
-                'type' => $request->type,
+                'type' => $metadata['type'],
                 'status' => "WAITING",
-                'metadata' => $paymentIntent->metadata->toJSON()
+                'metadata' => json_encode($paymentIntent->metadata)
             ]);
             $output = [
                 'clientSecret' => $paymentIntent->client_secret,

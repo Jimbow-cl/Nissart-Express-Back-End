@@ -56,12 +56,13 @@ class TicketController extends Controller
         //Décoder en JSON la colonne métadata
 
         $metadata = json_decode($order->metadata, true);
-        Log::error('Metadata ' . $order->metadata);
+        Log::error('Metadata ' . json_encode($metadata));
         Ticket::create([
+            'order_id'=>$order->id,
             'start' => $metadata['start'],
             'end' => $metadata['end'],
             'passenger' => $metadata['passenger'],
-            'class' => $order->metadata['class'],
+            'class' => $metadata['class'],
             'schedule' => $metadata['schedule'],
             'user_id' => $metadata['user_id'],
             'status' => "AVAILABLE"
