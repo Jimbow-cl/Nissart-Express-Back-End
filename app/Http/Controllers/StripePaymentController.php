@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Stripe\Stripe;
 use ErrorException;
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class StripePaymentController extends Controller
@@ -14,7 +16,6 @@ class StripePaymentController extends Controller
     public function payByStripe(Request $request)
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
-        Log::info($request);
 
         try {
             // Récuperation des données du Front
@@ -40,11 +41,16 @@ class StripePaymentController extends Controller
                     'voucher_id' => $metadata['voucher_id']
                 ]
             ]);
-
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                'paiement_id' => $paymentIntent->id,
+                'type' => $request->type,
+                'status' => "WAITING",
+                'metadata' => $paymentIntent->metadata->toJSON()
+            ]);
             $output = [
                 'clientSecret' => $paymentIntent->client_secret,
-                'amount' => $paymentIntent->amount,
-                'currency' => $paymentIntent->currency
+                'order' => $order->id
             ];
             return response()->json($output);
         } catch (ErrorException $e) {

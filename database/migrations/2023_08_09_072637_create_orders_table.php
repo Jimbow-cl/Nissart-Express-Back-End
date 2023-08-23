@@ -12,12 +12,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('receipt_trains', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('train_ticket_id');
-            $table->string('paiement_type')->default('card');
-            $table->bigInteger('voucher_id')->nullable();
-            $table->bigInteger('price');
+            $table->bigInteger('user_id');
+            $table->string('paiement_id');
+            $table->string('paiement_confirmation_id')->nullable();
+            $table->string('type');
+            $table->string('status');
+            // Stockage d'un JSON de commande
+            $table->text('metadata');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 
