@@ -57,17 +57,17 @@ class TicketController extends Controller
             $ticket = Ticket::where('id', $id)->first();
             $ticket->status = "CONTROLED";
             $ticket->save();
-        
 
-        return (response()->json([
-            'success' => true,
-        ])
-        );}
-        else{
+
+            return (response()->json([
+                'success' => true,
+            ])
+            );
+        } else {
             return (response()->json([
                 'success' => false,
-            ]));}
-        
+            ]));
+        }
     }
 
     public function create(Request $request)
@@ -100,8 +100,8 @@ class TicketController extends Controller
     {
         //choix des deux status
         $validStatus = ['VALIDATED', 'CONTROLED'];
-
-        $tickets = Ticket::whereIn('status', $validStatus)->get();
+        $today = now()->format('Y-m-d');
+        $tickets = Ticket::whereIn('status', $validStatus)->where('schedule', $today)->get();
 
         if ($tickets->isEmpty()) {
 
