@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GareController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\VoucherController;
@@ -23,17 +24,20 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('jwt.verify')->group(function () {
 
-Route::get('/voucher', [VoucherController::class, 'read']);
-Route::post('/voucher/{value}',[VoucherController::class,'create']);
-    
-// Tickets
-Route::get('/available', [TicketController::class, 'available']);
-Route::post('/validate/{id}', [TicketController::class, 'validation']);
-Route::post('/ticket/create', [TicketController::class, 'create']);
+    Route::get('/voucher', [VoucherController::class, 'read']);
+    Route::post('/voucher/create', [VoucherController::class, 'create']);
 
-//Paiements Stripes
+    // Tickets
+    Route::get('/available', [TicketController::class, 'available']);
+    Route::post('/validate/{id}', [TicketController::class, 'validation']);
+    Route::post('/ticket/create', [TicketController::class, 'create']);
 
-Route::post('order/pay',[StripePaymentController::class,'payByStripe']);
+    //Paiements Stripes
+    Route::post('order/pay', [StripePaymentController::class, 'payByStripe']);
+
+    //Orders
+    Route::get('/order', [OrderController::class, 'read']);
+
 });
 
 /*Routes Publiques*/

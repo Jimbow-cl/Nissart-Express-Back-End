@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\User;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
@@ -12,22 +13,35 @@ class VoucherController extends Controller
 {
     // Création d'un voucher
 
-    public function Create(Request $request, $value)
+    public function create(Request $request)
     {
         // Création des ressources offertes
         $user_id = Auth::id();
+        $order = Order::where('user_id', $user_id)->where('paiement_id', $request->paiement_id)->first();
+        $order->status = "PAYED";
+        $order->paiement_confirmation_id = $request->paiement_confirmation_id;
+        $order->save();
+        //Décoder en JSON la colonne métadata
+
+        $metadata = json_decode($order->metadata, true);
+
         $voucher = Voucher::where('user_id', $user_id)->first();
         if ($voucher === null) {
             $voucher = new Voucher();
-            $voucher->user_id = $user_id;
-            $voucher->value = $value;
+            $voucher->user_id = $metadata['user_id'];
+            $voucher->value = $metadata['value'];
             $voucher->save();
+
+            //Mise en place de l'information sur le User
+
             $verify = Voucher::select('value')->where('user_id', $user_id)->first();
             $user = User::where('id', $user_id)->first();
             $user->voucher = $verify->value;
             $user->save();
-            return response()->json(['success' => true], 200);
-
+            return response()->json([
+                'success' => true,
+                'voucher' =>  $user->voucher
+            ], 200);
         } else {
             return response()->json(['Already an actif voucher'], 200);
         }
@@ -35,7 +49,7 @@ class VoucherController extends Controller
 
     //lecture des vouchers disponibles
     //lecture des vouchers disponibles
-    public function Read()
+    public function read()
     {
         $user_id = Auth::id();
         $voucher = Voucher::where('user_id', $user_id)->first();
@@ -53,7 +67,7 @@ class VoucherController extends Controller
                 $user = User::where('id', $user_id)->first();
                 $user->voucher = null;
                 $user->save();
-    
+
                 $voucher->delete();
                 return response()->json(['success' => false]);
             }

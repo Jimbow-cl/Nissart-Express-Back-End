@@ -30,14 +30,8 @@ class StripePaymentController extends Controller
                     'enabled' => true,
                 ],
                 'setup_future_usage' => 'on_session',
-                'metadata' => [
-                    'end' => $metadata['end'],
-                    'start' => $metadata['start'],
-                    'passenger' => $metadata['passenger'],
-                    'schedule' => $metadata['schedule'],
-                    'class' => $metadata['class'],
-                    'user_id' => $metadata['user_id'],
-                    'price' => $metadata['price'],                ]
+                // Appel de la fonction de choix des metadatas
+                'metadata' => $this->getMetadata($metadata)
             ]);
             $order = Order::create([
                 'user_id' => Auth::id(),
@@ -53,6 +47,34 @@ class StripePaymentController extends Controller
             return response()->json($output);
         } catch (ErrorException $e) {
             return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function getMetadata($metadata)
+    {
+
+        if ($metadata['type'] == "card") {
+            return ([
+                    'value' => $metadata['value'],
+                    'user_id' => $metadata['user_id'],
+                    'price' => $metadata['price'],
+                ]);
+        } else if ($metadata['type'] == "ticket") {
+            return ([
+                    'end' => $metadata['end'],
+                    'start' => $metadata['start'],
+                    'passenger' => $metadata['passenger'],
+                    'schedule' => $metadata['schedule'],
+                    'class' => $metadata['class'],
+                    'user_id' => $metadata['user_id'],
+                    'price' => $metadata['price'],
+                ]);
+        } else if ($metadata['type'] == "fine") {
+            return ([
+                    'description' => $metadata['description'],
+                    'user_id' => $metadata['user_id'],
+                    'price' => $metadata['price'],
+                ]);
         }
     }
 }
