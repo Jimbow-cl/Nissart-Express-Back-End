@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Ticket;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Mockery\Undefined;
 
 class TicketController extends Controller
 {
@@ -57,7 +59,7 @@ class TicketController extends Controller
 
         $metadata = json_decode($order->metadata, true);
         Ticket::create([
-            'order_id'=>$order->id,
+            'order_id' => $order->id,
             'start' => $metadata['start'],
             'end' => $metadata['end'],
             'passenger' => $metadata['passenger'],
@@ -70,5 +72,29 @@ class TicketController extends Controller
             'success' => true,
         ])
         );
+    }
+    // Récupération pour le contrôleur, de la liste des tickets valides
+    public function readValid()
+    {
+        $tickets = Ticket::where('status', 'VALIDATED')->get();
+
+        if ($tickets->isEmpty()) {
+
+            return (response()->json([
+                'message' => 'No Ticket Validated'
+            ]));
+        } else {
+            foreach ($tickets as $ticket) {
+                $user = User::where('id', $ticket->user_id)->first();
+                $ticket->lastname = $user->lastname;
+                $ticket->firstname = $user->firstname;
+                $ticket->voucher = $user->voucher;
+                $ticket->role = $user->role;
+            }
+            return (response()->json([
+                'tickets' => $ticket,
+            ])
+            );
+        }
     }
 }

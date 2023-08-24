@@ -31,12 +31,15 @@ Route::middleware('jwt.verify')->group(function () {
     Route::get('/available', [TicketController::class, 'available']);
     Route::post('/validate/{id}', [TicketController::class, 'validation']);
     Route::post('/ticket/create', [TicketController::class, 'create']);
-
+    Route::get('/control',[TicketController::class, 'readvalid']);
     //Paiements Stripes
     Route::post('order/pay', [StripePaymentController::class, 'payByStripe']);
 
     //Orders
     Route::get('/order', [OrderController::class, 'read']);
+
+ 
+   
 
 });
 
