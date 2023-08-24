@@ -48,6 +48,28 @@ class TicketController extends Controller
         );
     }
 
+    public function control($id)
+    {
+        $traincrew_id = Auth::id();
+        $traincrew = User::where('id', $traincrew_id)->first();
+        //Vérification que le control provient bien d'un controleur
+        if ($traincrew->role === "traincrew") {
+            $ticket = Ticket::where('id', $id)->first();
+            $ticket->status = "CONTROLED";
+            $ticket->save();
+        
+
+        return (response()->json([
+            'success' => true,
+        ])
+        );}
+        else{
+            return (response()->json([
+                'success' => false,
+            ]));}
+        
+    }
+
     public function create(Request $request)
     {
         $user_id = Auth::id();
@@ -76,7 +98,10 @@ class TicketController extends Controller
     // Récupération pour le contrôleur, de la liste des tickets valides
     public function readValid()
     {
-        $tickets = Ticket::where('status', 'VALIDATED')->get();
+        //choix des deux status
+        $validStatus = ['VALIDATED', 'CONTROLED'];
+
+        $tickets = Ticket::whereIn('status', $validStatus)->get();
 
         if ($tickets->isEmpty()) {
 
@@ -90,9 +115,11 @@ class TicketController extends Controller
                 $ticket->firstname = $user->firstname;
                 $ticket->voucher = $user->voucher;
                 $ticket->role = $user->role;
+                //Création d'un tableau
+                $ticketsArray[] = $ticket;
             }
             return (response()->json([
-                'tickets' => $ticket,
+                'tickets' => $ticketsArray,
             ])
             );
         }

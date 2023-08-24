@@ -32,6 +32,7 @@ Route::middleware('jwt.verify')->group(function () {
     Route::post('/validate/{id}', [TicketController::class, 'validation']);
     Route::post('/ticket/create', [TicketController::class, 'create']);
     Route::get('/control',[TicketController::class, 'readvalid']);
+    Route::post('/control/{id}', [TicketController::class, 'control']);
     //Paiements Stripes
     Route::post('order/pay', [StripePaymentController::class, 'payByStripe']);
 
