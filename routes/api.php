@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FineController;
 use App\Http\Controllers\GareController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StripePaymentController;
@@ -33,12 +35,17 @@ Route::middleware('jwt.verify')->group(function () {
     Route::post('/ticket/create', [TicketController::class, 'create']);
     Route::get('/control',[TicketController::class, 'readvalid']);
     Route::post('/control/{id}', [TicketController::class, 'control']);
+    Route::post('/fine/pay', [FineController::class, 'create']);
+
     //Paiements Stripes
     Route::post('order/pay', [StripePaymentController::class, 'payByStripe']);
 
     //Orders
     Route::get('/order', [OrderController::class, 'read']);
 
+    //Admin
+    Route::get('/alluser', [AdminController::class, 'displayUser']);
+    Route::post('/roleuser', [AdminController::class, 'roleUser']);
  
    
 
