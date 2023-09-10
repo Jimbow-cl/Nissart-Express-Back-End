@@ -16,7 +16,7 @@ class AdminController extends Controller
         //Verification que l'admin est bien admin
 
         if ($find->role === "admin") {
-            $user = User::select('id', 'firstname', 'lastname', 'voucher', 'role')->get();
+            $user = User::select('id', 'firstname', 'lastname', 'voucher','role', 'active')->get();
             return response()->json([
                 'success' => true,
                 'user' => $user
@@ -73,6 +73,22 @@ class AdminController extends Controller
                 default:
                     break;
             }
+
+            return response()->json([]);
+        } else {
+            return response()->json([
+                'status' => 'unauthorized'
+            ]);
+        }
+    }
+    public function activate(Request $request)
+    {
+        $admin = User::find(Auth::user()->id);
+        $user = User::where('id', $request->id)->first();
+        //Verification que l'admin est bien admin et que le user existe
+        if ($admin->role === "admin" && $user != null) {
+            $user->active = !$user->active;
+            $user->save();
 
             return response()->json([]);
         } else {

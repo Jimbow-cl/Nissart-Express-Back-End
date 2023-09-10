@@ -46,6 +46,7 @@ Route::middleware('jwt.verify')->group(function () {
     //Admin
     Route::get('/alluser', [AdminController::class, 'displayUser']);
     Route::post('/roleuser', [AdminController::class, 'roleUser']);
+    Route::post('/activeuser', [AdminController::class, 'activate']);
  
    
 

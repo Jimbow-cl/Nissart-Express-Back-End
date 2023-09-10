@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->bigInteger('voucher')->nullable();
             $table->string('role')->default('user');
+            $table->boolean('active')->default(true);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 

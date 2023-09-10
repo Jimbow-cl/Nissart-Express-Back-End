@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Voucher;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -141,7 +142,10 @@ class AuthController extends Controller
     {
         $id = Auth::user()->id;
         $user = User::find($id);
-        $user->delete();
+        $user->active = !$user->active;
+        $user->updated_at = Carbon::now();
+        $user->save();
+        Auth::logout();
 
         return response()->json([
             'status' => 'success'
