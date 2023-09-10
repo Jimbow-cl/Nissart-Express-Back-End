@@ -47,6 +47,9 @@ class GareController extends Controller
 
     public function calculPrix(Request $request)
     {
+        if ($request->query('passenger') == null) {
+            $passenger=1;
+        };
         // utilisation des Query Params à la place des Pass Params
 
         $start = $request->query('start');
@@ -120,7 +123,7 @@ class GareController extends Controller
 
         // Calcul du prix total après réduction et ajout des passagers
         $totalPrice = ($totalPriceBfVoucher * $passenger) - $priceVoucher;
-
+        $totalbf = ($totalPriceBfVoucher * $passenger);
         // je préviens juste au cas où le prix est inférieur, d'un minimum de 0€
         if ($totalPrice < 0) {
             $totalPrice = 0;
@@ -130,15 +133,40 @@ class GareController extends Controller
         //Calcul de la première classe 
         $prix1st = $totalPrice * 1.4;
         $prix1st = round($prix1st, 2);
-        $priceVoucher = round($priceVoucher, 2);
+
+        //Calcul de la troisieme classe 
+        $pri3xrd = $totalPrice * 0.8;
+        $pri3xrd = round($pri3xrd, 2);
+
+        //Calcul du prix total Premiere
+        $totalbf1 = $totalbf * 1.4;
+        $totalbf1 = round($totalbf1, 2);
+
+        //Calcul du prix total Seconde
+        $totalbf2 = $totalbf;
+        $totalbf2 = round($totalbf2, 2);
+
+        //Calcul du prix total Troisieme
+        $totalbf3 = $totalbf * 0.8;
+        $totalbf3 = round($totalbf3, 2);
+        //Calcul des reductions
+        $priceVoucherthree = round(($priceVoucher * 0.8), 2);
+        $priceVouchertwo = round($priceVoucher, 2);
+        $priceVoucherone = round(($priceVoucher * 1.4), 2);
         return response()->json([
             'depart' => $startStation['gare'],
             'arrivee' => $endStation['gare'],
             'date' => $date,
             'passager' => $passenger,
-            'discount' => $priceVoucher,
+            'discountone' => $priceVoucherone,
+            'discounttwo' => $priceVouchertwo,
+            'discountthree' => $priceVoucherthree,
+            'totalbfone' => $totalbf1,
+            'totalbftwo' => $totalbf2,
+            'totalbfthree' => $totalbf3,
             'prix1st' => $prix1st,
             'prix2nd' => $totalPrice,
+            'prix3rd' => $pri3xrd,
         ]);
     }
 }
