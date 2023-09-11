@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Voucher;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,19 +55,17 @@ class AuthController extends Controller
             'lastname' => 'required|string',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string',
-            'username' => 'required|string|unique:users',
             'date_of_birth' => 'required|date|before:-18 years',
-            'name' => 'required|string',
         ]);
 
         $user = User::create([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'email' => $request->email,
+            'role' => 'user',
+            'voucher' => null,
             'password' => Hash::make($request->password),
-            'username' => $request->username,
             'date_of_birth' => $request->date_of_birth,
-            'planetary_system_name' => $request->name,
         ]);
         Auth::login($user);
         $credentials = $request->only('email', 'password');
@@ -106,7 +106,6 @@ class AuthController extends Controller
             //dans la table Users.
             'email' => 'required|string|email|unique:users,email,' . Auth::user()->id,
             'password' => 'required|string',
-            'username' => 'required|string|unique:users,username,' . Auth::user()->id
         ]);
 
         $update = User::find(Auth::user()->id);
@@ -114,7 +113,6 @@ class AuthController extends Controller
         $update->lastname = $request->input('lastname');
         $update->email = $request->input('email');
         $update->password = Hash::make($request->input('password'));
-        $update->username = $request->input('username');
         $update->save();
         Auth::login($update);
 
@@ -144,10 +142,15 @@ class AuthController extends Controller
     {
         $id = Auth::user()->id;
         $user = User::find($id);
-        $user->delete();
+        $user->active = !$user->active;
+        $user->updated_at = Carbon::now();
+        $user->save();
+        Auth::logout();
 
         return response()->json([
             'status' => 'success'
         ]);
     }
+
+   
 }
